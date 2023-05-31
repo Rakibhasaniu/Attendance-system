@@ -1,6 +1,10 @@
 const express = require("express");
 const connectDB = require("./db");
+const model = require("./models/User");
+const User = require("./models/User");
+
 const app = express();
+app.use(express.json());
 
 app.get("/", (req, res) => {
   const obj = {
@@ -8,6 +12,22 @@ app.get("/", (req, res) => {
     email: "ayman@example.com",
   };
   res.json(obj);
+});
+app.post("/register", async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "Invalid Data" });
+  }
+
+  let user = await User.findOne({ email });
+  if (user) {
+    return res.status(400).json({ message: "User Already Exist" });
+  }
+
+  user = new User({ name, email, password });
+  await user.save();
+
+  res.status(201).json({ message: "User Created Successfully", user });
 });
 
 connectDB(
