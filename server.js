@@ -45,6 +45,28 @@ app.post("/register", async (req, res, next) => {
   }
 });
 
+app.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    console.log(user);
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credential" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credential" });
+    }
+
+    delete user._doc.password;
+
+    return res.status(200).json({ message: "Login Successfully", user });
+  } catch (e) {
+    next(e);
+  }
+});
+
 connectDB(
   "mongodb+srv://attendance-app:Sk5PkYLj541twUqs@cluster0.48q4yql.mongodb.net/?retryWrites=true&w=majority"
 )
