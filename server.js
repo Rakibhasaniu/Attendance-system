@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./db");
 const model = require("./models/User");
+const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 
 const app = express();
@@ -25,6 +26,11 @@ app.post("/register", async (req, res) => {
   }
 
   user = new User({ name, email, password });
+
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
+  user.password = hash;
+
   await user.save();
 
   res.status(201).json({ message: "User Created Successfully", user });
