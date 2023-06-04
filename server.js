@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./db");
 const model = require("./models/User");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 
 const app = express();
@@ -61,7 +62,9 @@ app.post("/login", async (req, res, next) => {
 
     delete user._doc.password;
 
-    return res.status(200).json({ message: "Login Successfully", user });
+    const token = jwt.sign(user, "secret-key");
+
+    return res.status(200).json({ message: "Login Successfully", token });
   } catch (e) {
     next(e);
   }
