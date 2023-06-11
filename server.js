@@ -1,9 +1,10 @@
 const express = require("express");
 const connectDB = require("./db");
-const model = require("./models/User");
+// const model = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
+const authenticate = require("./middleware/authenticate");
 
 const app = express();
 app.use(express.json());
@@ -69,7 +70,7 @@ app.post("/login", async (req, res, next) => {
     next(e);
   }
 });
-app.get("/private", async (req, res) => {
+app.get("/private", authenticate, async (req, res) => {
   return res.status(200).json({ message: "i am a Private Route" });
 });
 app.get("/public", (req, res) => {
