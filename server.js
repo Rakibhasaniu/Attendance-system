@@ -62,7 +62,7 @@ app.post("/login", async (req, res, next) => {
 
     delete user._doc.password;
 
-    const token = jwt.sign(user, "secret-key");
+    const token = jwt.sign(user._doc, "secret-key", { expiresIn: "2h" });
 
     return res.status(200).json({ message: "Login Successfully", token });
   } catch (e) {
