@@ -50,7 +50,7 @@ app.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return res.status(400).json({ message: "Invalid credential" });
     }
@@ -68,6 +68,15 @@ app.post("/login", async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+});
+app.get("/private", (req, res) => {
+  if (!req.headers.authorization) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  return res.status(200).json({ message: "i am a Private Route" });
+});
+app.get("/public", (req, res) => {
+  return res.status(200).json({ message: "I am a public route" });
 });
 
 connectDB(
