@@ -70,9 +70,19 @@ app.post("/login", async (req, res, next) => {
   }
 });
 app.get("/private", (req, res) => {
-  if (!req.headers.authorization) {
+  let token = req.headers.authorization;
+  if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+  try {
+    token = token.split(" ")[1];
+    const user = jwt.verify(token, "secret-key");
+    console.log(user);
+  } catch (e) {
+    return res.status(400).json({ message: "Invalid Token" });
+    // console.log(e);
+  }
+
   return res.status(200).json({ message: "i am a Private Route" });
 });
 app.get("/public", (req, res) => {
