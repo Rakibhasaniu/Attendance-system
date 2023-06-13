@@ -1,6 +1,4 @@
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const { loginService, registerService } = require("../service/auth");
 
 const registerController = async (req, res, next) => {
   const { name, email, password, accountStatus } = req.body;
@@ -9,6 +7,8 @@ const registerController = async (req, res, next) => {
   }
 
   try {
+    const user = await registerService({ name, email, password });
+    res.status(201).json({ message: "User Created Successfully", user });
   } catch (e) {
     next(e);
   }
@@ -16,6 +16,8 @@ const registerController = async (req, res, next) => {
 
 const loginController = async (req, res, next) => {
   try {
+    const token = await loginService({ email, password });
+    return res.status(200).json({ message: "Login Successfully", token });
   } catch (e) {
     next(e);
   }

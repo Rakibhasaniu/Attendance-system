@@ -1,11 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const { findUserByProperty } = require("./user");
 
-const registerService = async () => {
-  let user = await User.findOne({ email });
+const registerService = async ({ name, email, password }) => {
+  let user = await findUserByProperty("email", email);
   if (user) {
-    return res.status(400).json({ message: "User Already Exist" });
+    const error = new Error("User Already Exist");
+    error.status = 400;
+    throw error;
   }
 
   user = new User({ name, email, password, accountStatus });
@@ -15,8 +18,6 @@ const registerService = async () => {
   user.password = hash;
 
   await user.save();
-
-  res.status(201).json({ message: "User Created Successfully", user });
 };
 
 const loginService = async () => {
@@ -35,6 +36,4 @@ const loginService = async () => {
   delete user._doc.password;
 
   const token = jwt.sign(user._doc, "secret-key", { expiresIn: "2h" });
-
-  return res.status(200).json({ message: "Login Successfully", token });
 };
