@@ -7,8 +7,12 @@ const findUserByProperty = (key, value) => {
   return User.findById({ [key]: value });
 };
 
-const createUser = ({ name, email, password }) => {};
+const createUser = ({ name, email, password }) => {
+  const user = new User({ name, email, password });
+  return user.save();
+};
 
 module.exports = {
   findUserByProperty,
+  createUser,
 };

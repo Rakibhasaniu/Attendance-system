@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const { findUserByProperty } = require("./user");
+const { findUserByProperty, createUser } = require("./user");
 
 const registerService = async ({ name, email, password }) => {
   let user = await findUserByProperty("email", email);
@@ -15,9 +15,8 @@ const registerService = async ({ name, email, password }) => {
 
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
-  user.password = hash;
 
-  await user.save();
+  return createUser({ name, email, hash });
 };
 
 const loginService = async () => {
